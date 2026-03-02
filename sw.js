@@ -1,4 +1,4 @@
-const CACHE_NAME = 'dad-energy-meter-v5';
+const CACHE_NAME = 'dad-energy-meter-v6';
 const APP_ASSETS = [
   './',
   './index.html',
@@ -36,23 +36,21 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  const requestUrl = new URL(event.request.url);
+  const isAppAsset = requestUrl.origin === self.location.origin;
+
   event.respondWith(
-    caches.match(event.request).then((cached) => {
-      if (cached) {
-        return cached;
-      }
-
-      return fetch(event.request)
-        .then((response) => {
-          if (!response || response.status !== 200 || response.type === 'opaque') {
-            return response;
-          }
-
+    fetch(event.request)
+      .then((response) => {
+        if (isAppAsset && response && response.status === 200 && response.type !== 'opaque') {
           const responseClone = response.clone();
           caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseClone));
-          return response;
-        })
-        .catch(() => caches.match('./index.html'));
-    })
+        }
+
+        return response;
+      })
+      .catch(() =>
+        caches.match(event.request).then((cached) => cached || caches.match('./index.html'))
+      )
   );
 });
