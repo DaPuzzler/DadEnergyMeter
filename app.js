@@ -314,6 +314,19 @@ function renderChart(entries) {
         pointBorderColor: '#ef7d23',
         fill: false,
       },
+      {
+        label: 'Sleep',
+        data: chartEntries.map((entry) => {
+          const normalized = normalizeEntry(entry);
+          return normalized.sleep === '' ? null : normalized.sleep;
+        }),
+        borderColor: '#3f83f8',
+        backgroundColor: 'rgba(63, 131, 248, 0.14)',
+        tension: 0.35,
+        pointBackgroundColor: '#3f83f8',
+        pointBorderColor: '#3f83f8',
+        fill: false,
+      },
     ],
   };
 
@@ -337,11 +350,11 @@ function renderChart(entries) {
         y: {
           beginAtZero: true,
           min: 0,
-          max: 10,
-          ticks: { stepSize: 2 },
+          max: 24,
+          ticks: { stepSize: 4 },
           title: {
             display: true,
-            text: 'Energy',
+            text: 'Energy / Sleep Hours',
           },
         },
       },
